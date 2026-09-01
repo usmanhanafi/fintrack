@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import { ChartPie, House, Plus, Settings, Target, Receipt } from "lucide-react";
 import { Sheet } from "./ui/sheet";
 import { SyncBadge } from "./sync-badge";
@@ -17,12 +17,33 @@ const NAV = [
   { href: "/settings", label: "Atur", icon: Settings },
 ];
 
+/** Shortcut homescreen "Tambah pengeluaran" (lihat manifest.ts) membuka app
+ * lewat /?add=expense. Query dibuang lagi supaya tidak retrigger saat reload. */
+function AddShortcutListener({ onTrigger }: { onTrigger: () => void }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("add") === "expense") {
+      onTrigger();
+      router.replace(pathname);
+    }
+  }, [searchParams, pathname, router, onTrigger]);
+
+  return null;
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [adding, setAdding] = useState(false);
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col">
+      <Suspense fallback={null}>
+        <AddShortcutListener onTrigger={() => setAdding(true)} />
+      </Suspense>
+
       <header className="safe-top sticky top-0 z-30 flex items-center justify-between border-b border-border bg-bg/90 px-4 py-3 backdrop-blur">
         <Link href="/" className="text-base font-semibold tracking-tight">
           FinTrack
