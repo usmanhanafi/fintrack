@@ -1,0 +1,20 @@
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://jcunrwkybuirtjyjgklk.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_nPVT-K2GTph18VSXQSvbRg_6DxVSuyv
+SUPABASE_SERVICE_ROLE_KEY=sb_secret_XSihCkO5F8zE9kBJXIcs0Q_Zd2yGubZ
+
+# Zona waktu untuk pengelompokan harian dan bulanan
+NEXT_PUBLIC_APP_TIMEZONE=Asia/Jakarta
+
+# Fase 2: agent WhatsApp
+WHATSAPP_PHONE_NUMBER_ID=
+WHATSAPP_ACCESS_TOKEN=
+WHATSAPP_VERIFY_TOKEN=
+WHATSAPP_APP_SECRET=
+ANTHROPIC_API_KEY=
+
+# Login: allowlist nomor + PIN, tanpa OTP.
+# Format: nomor saja, atau "nomor:Nama". Pisah dengan koma.
+ALLOWED_PHONES=+62895421900858:Pemilik
+LOGIN_PIN=000000
+SESSION_SECRET=DhWYt6EZX/wMK+EPHHR5oM6mq/YfjrNVtpY9HToxLBs=

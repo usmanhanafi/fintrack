@@ -12,11 +12,12 @@ export type SyncState = {
   pending: number;
   lastSyncedAt: string | null;
   message?: string;
+  rejected: number;
 };
 
 type Listener = (state: SyncState) => void;
 
-let state: SyncState = { status: "idle", pending: 0, lastSyncedAt: null };
+let state: SyncState = { status: "idle", pending: 0, lastSyncedAt: null, rejected: 0 };
 const listeners = new Set<Listener>();
 let running = false;
 let queuedAgain = false;
@@ -117,20 +118,37 @@ async function push(): Promise<void> {
 
     const body = (await res.json()) as {
       applied: Array<{ entity: Entity; row: Record<string, unknown> }>;
+      rejected: Array<{ id: string; reason: string }>;
       overwritten: number;
     };
+
+    // Hanya baris yang benar-benar diterima server boleh lepas dari outbox.
+    // Baris yang ditolak (mis. gagal validasi) harus tetap tersimpan supaya
+    // kelihatan sebagai gagal, bukan hilang diam-diam dianggap sudah sinkron.
+    const rejectedIds = new Set(body.rejected.map((r) => r.id));
+    const doneSeqs = rows
+      .filter((r) => !rejectedIds.has(r.entity_id))
+      .map((r) => r.seq!)
+      .filter(Boolean);
 
     await db.transaction("rw", db.tables, async () => {
       for (const { entity, row } of body.applied) {
         await table(db, entity).put(row);
       }
-      await db.outbox.bulkDelete(rows.map((r) => r.seq!).filter(Boolean));
+      await db.outbox.bulkDelete(doneSeqs);
     });
 
     if (body.overwritten > 0) {
       emit({ message: `${body.overwritten} perubahan ditimpa versi terbaru` });
     }
+    if (body.rejected.length > 0) {
+      emit({
+        rejected: body.rejected.length,
+        message: `${body.rejected.length} perubahan ditolak server: ${body.rejected[0].reason}`,
+      });
+    }
     emit({ pending: await countPending() });
+    if (rejectedIds.size > 0) return; // hindari retry loop tak berkesudahan pada baris yang sama
     if (rows.length < BATCH) return;
   }
 }

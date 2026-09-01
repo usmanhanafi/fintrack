@@ -5,14 +5,14 @@ import { seedIfEmpty } from "@/lib/db/seed";
 import { runRecurring } from "@/lib/domain/recurring";
 import { startSyncLoop, subscribeSync, type SyncState } from "@/lib/sync/engine";
 
-const SyncContext = createContext<SyncState>({ status: "idle", pending: 0, lastSyncedAt: null });
+const SyncContext = createContext<SyncState>({ status: "idle", pending: 0, lastSyncedAt: null, rejected: 0 });
 
 export function useSyncState() {
   return useContext(SyncContext);
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const [sync, setSync] = useState<SyncState>({ status: "idle", pending: 0, lastSyncedAt: null });
+  const [sync, setSync] = useState<SyncState>({ status: "idle", pending: 0, lastSyncedAt: null, rejected: 0 });
 
   useEffect(() => {
     let stop: (() => void) | undefined;

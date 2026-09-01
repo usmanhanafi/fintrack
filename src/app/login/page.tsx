@@ -1,16 +1,10 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { KeyRound, User, Wallet } from "lucide-react";
+import { KeyRound, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
-import { cn } from "@/lib/utils";
-
-interface LoginUser {
-  phone: string;
-  label: string;
-}
 
 export default function LoginPage() {
   return (
@@ -25,24 +19,13 @@ function LoginForm() {
   const params = useSearchParams();
   const next = params.get("next") || "/";
 
-  const [users, setUsers] = useState<LoginUser[] | null>(null);
   const [phone, setPhone] = useState("");
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  useEffect(() => {
-    fetch("/api/login-options")
-      .then((r) => r.json())
-      .then((body: { users: LoginUser[] }) => {
-        setUsers(body.users);
-        if (body.users.length === 1) setPhone(body.users[0].phone);
-      })
-      .catch(() => setUsers([]));
-  }, []);
-
   const submit = async () => {
-    if (!phone) return setError("Pilih nomor terlebih dahulu");
+    if (!phone) return setError("Masukkan nomor HP");
     if (!pin) return setError("Masukkan PIN");
 
     setBusy(true);
@@ -70,38 +53,21 @@ function LoginForm() {
           <Wallet className="size-7" aria-hidden="true" />
         </span>
         <h1 className="text-2xl font-semibold">FinTrack</h1>
-        <p className="text-sm text-muted">Pilih akun, lalu masukkan PIN.</p>
+        <p className="text-sm text-muted">Masuk dengan nomor HP dan PIN.</p>
       </div>
 
       <div className="flex flex-col gap-4">
-        {users === null ? (
-          <p className="text-center text-sm text-muted">Memuat...</p>
-        ) : users.length === 0 ? (
-          <p className="rounded-xl bg-danger/10 px-3 py-2 text-center text-sm text-danger">
-            Belum ada nomor terdaftar. Isi ALLOWED_PHONES di env server.
-          </p>
-        ) : (
-          <div className="flex flex-col gap-2">
-            <span className="text-sm font-medium text-muted">Akun</span>
-            <div className="flex flex-col gap-2">
-              {users.map((u) => (
-                <button
-                  key={u.phone}
-                  type="button"
-                  onClick={() => setPhone(u.phone)}
-                  aria-pressed={phone === u.phone}
-                  className={cn(
-                    "flex items-center gap-3 rounded-xl border px-3 py-2.5 text-left",
-                    phone === u.phone ? "border-brand bg-brand/10" : "border-border",
-                  )}
-                >
-                  <User className="size-4 shrink-0 text-muted" aria-hidden="true" />
-                  <span className="text-sm font-medium">{u.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        <Field label="Nomor HP">
+          <Input
+            type="tel"
+            inputMode="tel"
+            autoComplete="username"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="+6281234567890"
+            autoFocus
+          />
+        </Field>
 
         <Field label="PIN">
           <Input
@@ -113,11 +79,10 @@ function LoginForm() {
             onKeyDown={(e) => e.key === "Enter" && void submit()}
             placeholder="......"
             className="text-center text-2xl tracking-widest"
-            autoFocus
           />
         </Field>
 
-        <Button onClick={submit} disabled={busy || !users?.length} size="lg">
+        <Button onClick={submit} disabled={busy} size="lg">
           <KeyRound className="size-4" aria-hidden="true" />
           {busy ? "Memeriksa" : "Masuk"}
         </Button>

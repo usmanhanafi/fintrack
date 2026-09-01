@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 const COOKIE_NAME = "fintrack_session";
-const PUBLIC_PATHS = ["/login", "/api/login", "/api/login-options", "/manifest.webmanifest", "/sw.js", "/icons", "/offline"];
+const PUBLIC_PATHS = ["/login", "/api/login", "/manifest.webmanifest", "/sw.js", "/icons", "/offline"];
 
 /**
  * Middleware hanya memeriksa keberadaan cookie sesi di sini. Verifikasi tanda tangan

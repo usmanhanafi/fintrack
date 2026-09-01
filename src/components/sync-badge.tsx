@@ -26,6 +26,8 @@ export function SyncBadge() {
       };
     if (sync.status === "error")
       return { icon: <TriangleAlert className="size-4" aria-hidden="true" />, label: "Gagal sync" };
+    if (sync.rejected > 0)
+      return { icon: <TriangleAlert className="size-4" aria-hidden="true" />, label: "Ada yang ditolak" };
     return { icon: <Check className="size-4" aria-hidden="true" />, label: "Tersimpan" };
   })();
 
