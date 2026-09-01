@@ -45,6 +45,11 @@ async function run(): Promise<void> {
   const now = new Date().toISOString();
   let seeded = false;
 
+  // Tarik dulu data server sebelum menilai "kosong". Tanpa ini, perangkat baru yang
+  // belum pernah pull bisa mengira akun belum ada padahal server sudah punya (dibuat
+  // dari perangkat lain), lalu ikut membuat akun bawaan lagi jadi berganda.
+  await requestSync();
+
   // Pemeriksaan dan penulisan berada di satu transaksi database, jadi dua pemanggilan
   // bersamaan tidak bisa sama-sama lolos pemeriksaan kosong.
   await db.transaction("rw", db.accounts, db.categories, db.outbox, db.meta, async () => {

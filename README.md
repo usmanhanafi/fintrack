@@ -79,3 +79,8 @@ src/
 supabase/migrations/ skema Postgres, RLS, allowlist nomor
 tests/               uji unit dan uji browser
 ```
+
+```bash
+npx supabase link --project-ref jcunrwkybuirtjyjgklk
+npx supabase db push
+```
