@@ -1,26 +1,96 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  color-scheme: light;
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #f1f3f6;
+  --border: #e3e6ec;
+  --text: #10141c;
+  --muted: #61697a;
+  --brand: #1f7a4d;
+  --brand-ink: #ffffff;
+  --danger: #c2381f;
+  --warn: #b25e00;
+  --ok: #1f7a4d;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0d1016;
+    --surface: #151a22;
+    --surface-2: #1d232d;
+    --border: #2a313d;
+    --text: #e9edf4;
+    --muted: #98a2b5;
+    --brand: #35c47f;
+    --brand-ink: #06170e;
+    --danger: #ff7a66;
+    --warn: #f0a44a;
+    --ok: #35c47f;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0d1016;
+  --surface: #151a22;
+  --surface-2: #1d232d;
+  --border: #2a313d;
+  --text: #e9edf4;
+  --muted: #98a2b5;
+  --brand: #35c47f;
+  --brand-ink: #06170e;
+  --danger: #ff7a66;
+  --warn: #f0a44a;
+  --ok: #35c47f;
 }
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-danger: var(--danger);
+  --color-warn: var(--warn);
+  --color-ok: var(--ok);
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+/* Aman untuk notch dan gesture bar saat berjalan sebagai aplikasi terpasang. */
+.safe-top { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
+*:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.tabular { font-variant-numeric: tabular-nums; }

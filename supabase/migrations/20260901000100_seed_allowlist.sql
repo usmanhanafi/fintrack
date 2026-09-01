@@ -1,0 +1,6 @@
+-- Isi nomor yang boleh mendaftar. Jalankan manual atau lewat CI.
+-- Format wajib E.164 lengkap dengan tanda plus.
+--
+-- insert into public.allowed_phones (phone, label)
+-- values ('+6281234567890', 'pemilik')
+-- on conflict (phone) do nothing;
